@@ -84,6 +84,7 @@
             margin-top: 20px;
             font-size: 14px;
             color: #333;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -98,7 +99,7 @@
             <input type="number" id="balance" placeholder="e.g., 5000" required>
             
             <label for="annualInterestRate">Annual Interest Rate (APR in %):</label>
-            <input type="number" id="annualInterestRate" placeholder="e.g., 18.5" required>
+            <input type="number" step="0.01" id="annualInterestRate" placeholder="e.g., 18.5" required>
             
             <label for="monthlyPayment">Monthly Payment (leave blank for time frame):</label>
             <input type="number" id="monthlyPayment" placeholder="e.g., 200">
@@ -132,10 +133,18 @@
             } else if (months) {
                 result = calculateByMonths(balance, monthlyInterestRate, months);
             } else {
-                result = "Please provide either a monthly payment or a time frame to calculate.";
+                document.getElementById('results').textContent = "Please provide either a monthly payment or a time frame to calculate.";
+                return;
             }
 
-            document.getElementById('results').textContent = JSON.stringify(result, null, 2);
+            const formattedResults = `
+Total Principal Paid: ${result["Total Principal Paid"]}
+Total Interest Paid: ${result["Total Interest Paid"]}
+Months to Pay Off: ${result["Months to Pay Off"] || ""}
+Monthly Payment: ${result["Monthly Payment"] || ""}
+            `.trim();
+
+            document.getElementById('results').textContent = formattedResults;
         });
 
         function calculateByMonthlyPayment(balance, monthlyInterestRate, monthlyPayment) {
